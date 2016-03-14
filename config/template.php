@@ -98,7 +98,7 @@ EOT;
 <?php
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
-class {$this->className} extends CI_Model
+class {$this->className}_Model extends CI_Model
 {
 	protected \$primary_table = "{$modelName}";
 	protected \$primary_key = "{$modelName}_id";

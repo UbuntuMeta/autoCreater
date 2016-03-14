@@ -50,20 +50,40 @@ class Creater
         $this->_createFile('helper', $helperStrs);
     }
 
+    /**
+     * 创建文件
+     *
+     * @param string $typeName 文件类型
+     * @param string $string 文件名字符串，多个以逗号分隔
+     * @author freephp
+     */
     private function _createFile($typeName, $string){
         $typeField = $typeName . 's';
         $this->$typeField = explode(',', $string);
         if (empty($this->$typeField)) exit("no $typeName's name enter, please check your input!");
         $template = new Template(array('type' => $typeName, 'isNormal' => true));
         foreach ($this->$typeField as $k => $v) {
+
             $template->className = $v;
+
+            if (strstr($v, '/')) {
+                $path = substr($v, 0, strripos(strtolower($v), '/'));
+                $toCreatePath = $this->configs[$typeName . 'Path'] . '/' . $path;
+                if (!is_dir($toCreatePath)) {
+                    mkdir($toCreatePath, 0777, true);
+                }
+                $template->className = str_replace($path .'/', '', $v);
+            }
+
             $contents = $template->loadFile();
-            $filePath = $this->configs[$typeName . 'Path'] . '/' . $v . '.php';
+
+            $filePath = $this->configs[$typeName . 'Path'] . '/' . strtolower($v) . '_model.php';
             if(!file_exists($filePath)) {
                 $this->_writeFile($filePath, $contents);
                 echo 'success write it!' . "\r\n";
             } else {
-                print_r('The  ' . $typeName . ' ' . $v . ' has existed, can not be created again!');
+                $this->_writeFile($filePath, $contents);
+                print_r('The  ' . $typeName . ' ' . $v . ' has existed,  created again!');
             }
         }
     }
@@ -73,9 +93,15 @@ class Creater
 		if (empty($arr)) exit('nothing to create!');
 
 
-
 	}
 
+    /**
+     * 写入文件
+     *
+     * @param string $filePath 文件地址
+     * @param string $contents 文件内容
+     * @author freephp
+     */
     private function _writeFile($filePath, $contents)
     {
         $fp = fopen($filePath, 'w');
