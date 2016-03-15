@@ -47,11 +47,12 @@ class Template
     private function _createController()
     {
         $modelName = strtolower($this->className);
+        $className = ucfirst($this->className);
         $content = <<<EOT
 <?php
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
-class {$this->className} extends CI_Controller
+class {$className} extends CI_Controller
 {
      function __construct()
     {
