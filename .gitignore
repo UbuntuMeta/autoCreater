@@ -1,4 +1,4 @@
 .idea
-controllers/*
-models/*
-helpers/*
+./controllers/*
+./models/*
+./helpers/*

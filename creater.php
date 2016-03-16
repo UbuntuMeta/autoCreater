@@ -88,6 +88,28 @@ class Creater
     } 
 
     /**
+	 * 显示帮助信息
+	 * @return string
+	 */
+	public function showTips()
+	{
+
+		// heredoc
+		print <<<EOT
+		usage: php creater.php [--help] [c ] [m ] [h][argv]
+
+		The most commonly used  commands are:
+
+		short name   complete name     description
+		   c          controller       to create controller file with a template
+		   m          model            to create model file with a template
+		   h          helper           to create helper file with a template
+
+EOT;
+
+	}
+
+    /**
      * 创建文件
      *
      * @param string $typeName 文件类型
@@ -97,16 +119,15 @@ class Creater
     private function _createFile($typeName, $string){
         $typeField = $typeName . 's';
         $this->$typeField = explode(',', $string);
-        if (empty($this->$typeField)) exit("no $typeName's name enter, please check your input!");
+        if (empty($this->{$typeField})) exit("no $typeName's name enter, please check your input!");
         $template = new Template(array('type' => $typeName, 'isNormal' => true));
  
 
         foreach ($this->$typeField as $k => $v) {
-
             $template->className = $v;
 
             if (strstr($v, '/')) {
-                $this->__splitDirsAndFile();
+                $template->className = $this->__splitDirsAndFile($v, $typeName);
             }
 
             $contents = $template->loadFile();
@@ -152,15 +173,15 @@ class Creater
         return $tail;
     }
 
-    private function __splitDirsAndFile() {
-		$path = substr($v, 0, strripos(strtolower($v), '/'));
+    private function __splitDirsAndFile($val, $typeName) {
+		$path = substr($val, 0, strripos(strtolower($val), '/'));
 
         $toCreatePath = $this->configs[$typeName . 'Path'] . '/' . $path;
         if (!is_dir($toCreatePath)) {
             mkdir($toCreatePath, 0777, true);
         }
 
-	    $template->className = str_replace($path .'/', '', $v);
+	    return str_replace($path .'/', '', $val);
 	}
 }
 
@@ -183,6 +204,8 @@ $creater = new Creater();
 
 if (strlen($action) == 1) {
 	$creater->alia(['opt' => $action, 'contents' => $param]);
+} elseif ($action == '--help')  {
+	$creater->showTips();
 } else {
 	$creater->$action($params);
 }
