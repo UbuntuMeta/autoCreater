@@ -8,7 +8,7 @@ class Template
 
     protected $isNormal = false; // 是否自动生成curd或model常规
 
-
+    protected $validType = ['controller', 'model', 'helper', 'view'];
     public function  __construct(array $params)
     {
         if ($this->existParam($params, 'className')) {
@@ -16,11 +16,10 @@ class Template
         } else {
             $this->className = 'Test';
         }
+        $this->type = $params['type'];
 
-        if (!in_array($params['type'], ['controller', 'model', 'helper'])) {
+        if (!$this->isValidType()) {
             exit('error type file to create!');
-        } else {
-            $this->type = $params['type'];
         }
 
         if ($this->existParam($params, 'isNormal')) {
@@ -29,19 +28,10 @@ class Template
 
     }
 
-
     public function loadFile()
     {
-        if($this->_isController()) {
-            return $this->_createController();
-        } elseif ($this->_isModel()) {
-            return $this->_createModel();
-        } elseif ($this->_isHelper()) {
-
-        } else {
-            exit('undefine type to create file.');
-        }
-
+        $operation = '_create' . ucfirst($this->type);
+        return $this->$operation();
     }
 
     private function _createController()
@@ -122,19 +112,19 @@ EOT;
         return $content;
     }
 
-    private function _isController() {
-        return ($this->type == 'controller')? : false;
-    }
+    private function _createView()
+    {
+        $content = $this->className . ' view';
 
-    private function _isModel() {
-        return ($this->type == 'model')? : false;
-    }
-    private function _isHelper() {
-        return ($this->type == 'helper')? : false;
+        return $content;
     }
 
     protected function existParam($var, $key)
     {
         return (isset($var[$key]) && $var[$key])? : false;
+    }
+
+    protected function isValidType() {
+        return (in_array($this->type, $this->validType))?:false;
     }
 }

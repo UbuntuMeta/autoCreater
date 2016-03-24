@@ -8,3 +8,7 @@ $config['modelPath'] = './models';
 
 $config['helperPath'] = './helpers';
 
+$config['viewPath'] = './views';
+
+$config['autoCURD'] = true; // 自动生成curd的view
+

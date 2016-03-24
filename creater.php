@@ -18,7 +18,16 @@ class Creater
 
 	protected $helpers = array();     // 组件数组
 
+	protected $views = array();       // 视图数组
+
     protected $configs = array();
+
+    protected $ailaMap = array(
+		    		'c' => 'controller',
+		    		'm' => 'model',
+		    		'h' => 'helper',
+		    		'v' => 'view'
+    		  );
 
 
     public function __construct()
@@ -59,6 +68,11 @@ class Creater
         $this->_createFile('helper', $helperStrs);
     }
 
+    public function view($viewStrs)
+    {
+    	$this->_createFile('view', $viewStrs);
+    }
+
     /**
      * 将缩写命令补全为完整命令并执行
      * 
@@ -68,23 +82,12 @@ class Creater
     public function alia(array $params)
     {
     	$operation = '';
-    	switch ($params['opt']) {
-    		case 'c':
-    			$operation = 'controller';
-    			break;
-    		case 'm':
-    			$operation = 'model';
-    			break;
-    		case 'h':
-    			$operation = 'helper';
-    			break;
-    		
-    		default:
-    			exit('error operation !');
-    			break;
+    	if (in_array($params['opt'], array_keys($this->ailaMap))) {
+    		$operation = $this->ailaMap[$params['opt']];
+    		$this->$operation($params['contents']);
+    	} else {
+    		exit('error operation !');
     	}
-
-    	$this->$operation($params['contents']);
     } 
 
     /**
@@ -104,7 +107,7 @@ class Creater
 		   c          controller       to create controller file with a template
 		   m          model            to create model file with a template
 		   h          helper           to create helper file with a template
-
+		   v          view             to create view file with a template
 EOT;
 
 	}
@@ -131,8 +134,7 @@ EOT;
             }
 
             $contents = $template->loadFile();
-            
-            $filePath = $this->configs[$typeName . 'Path'] . '/' . strtolower($v) . $this->_getFileTail($typeName);
+            $filePath = $this->_getFullPath($typeName, $v);
 
             if(!file_exists($filePath)) {
                 $this->_writeFile($filePath, $contents);
@@ -157,6 +159,17 @@ EOT;
         fputs($fp, $contents);
         fclose($fp);
 
+    }
+
+    /**
+     * 组装好完整的生成文件路径
+     * 
+     * @param  string $typeName  生成文件类型
+     * @param  string $className 类名
+     * @return string
+     */
+    private function _getFullPath($typeName, $className) {
+    	return $this->configs[$typeName . 'Path'] . '/' . strtolower($className) . $this->_getFileTail($typeName);
     }
 
 	/**
