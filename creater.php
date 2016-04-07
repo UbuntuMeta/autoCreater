@@ -1,15 +1,12 @@
 <?php
-
 /**
 *  自动化生成代码框架的工具类
 **/
 
-
 require './config/template.php';
 
 class Creater 
-{
-	
+{	
 	protected $controllers = array();  // 控制器数组
 
     protected $template = null;
@@ -39,6 +36,7 @@ class Creater
     	 require './config/conf.php'; // 加载配置
         $this->configs = $config;
     }
+
 	/**
 	 * 根据名称和模块生成默认模板内容的控制器
 	 * 
@@ -87,6 +85,7 @@ class Creater
     public function alia(array $params)
     {
     	$operation = '';
+        
     	if (in_array($params['opt'], array_keys($this->ailaMap))) {
     		$operation = $this->ailaMap[$params['opt']];
     		$this->$operation($params['contents']);
@@ -144,18 +143,15 @@ EOT;
             }
 
             $urlpath = str_replace($this->configs['viewPath'], '',  $path);
-            print <<<EOT
 
-        create curd views,route like these:
+            print <<<EOT
+create curd views,route like these:
                          {$urlpath}index
                          {$urlpath}add
                          {$urlpath}edit
                          {$urlpath}delete
 EOT;
         }
-
-
-
     }
 
     /**
@@ -171,7 +167,6 @@ EOT;
         if (empty($this->{$typeField})) exit("no $typeName's name enter, please check your input!");
         $template = new Template(array('type' => $typeName, 'isNormal' => true));
  
-
         foreach ($this->$typeField as $k => $v) {
             $template->className = $v;
 
@@ -181,8 +176,6 @@ EOT;
 
             $this->contents = $template->loadFile();
             $this->filePath = $this->_getFullPath($typeName, $v);
-
-            //var_dump($this->filePath);die();
 
             $this->_store($typeName);
         }
@@ -201,6 +194,7 @@ EOT;
         } else {
             print_r('The  ' . $typeName . ' ' . $v . ' has existed,  created again!');
         }
+
         $this->_writeFile($this->filePath, $this->contents);
     }
 
