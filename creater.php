@@ -221,7 +221,10 @@ EOT;
      * @return string
      */
     private function _getFullPath($typeName, $className) {
-    	return $this->configs[$typeName . 'Path'] . '/' . strtolower($className) . $this->_getFileTail($typeName);
+        $preFileName = strtolower($className);
+        if ($typeName == "controller") $preFileName = ucfirst($preFileName);
+
+    	return $this->configs[$typeName . 'Path'] . '/' . $preFileName . $this->_getFileTail($typeName);
     }
 
 	/**

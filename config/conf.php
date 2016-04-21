@@ -2,13 +2,14 @@
 /**
 *  生成代码的默认配置
 */
-$config['controllerPath'] = './controllers';
+$prefix = "D:/www/cust/application/";
+$config['controllerPath'] = $prefix . 'controllers';
 
-$config['modelPath'] = './models';
+$config['modelPath'] = $prefix . 'models';
 
-$config['helperPath'] = './helpers';
+$config['helperPath'] = $prefix . 'helpers';
 
-$config['viewPath'] = './views';
+$config['viewPath'] = $prefix . 'views';
 
 $config['autoCURD'] = true; // 自动生成curd的view
 
