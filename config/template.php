@@ -84,7 +84,16 @@ EOT;
 
     private function _createModel()
     {
-        $modelName = strtolower($this->className);
+        $modelName =  strtolower($this->className);
+        $classNameArr = explode('_', $this->className);
+        
+        if (!empty($classNameArr)) {
+            foreach ($classNameArr as $key => &$val) {
+            $classNameArr[$key] = ucfirst($val);
+        }
+        $this->className = implode('_',$classNameArr);
+        }
+        
         $content = <<<EOT
 <?php
 if (!defined('BASEPATH'))
